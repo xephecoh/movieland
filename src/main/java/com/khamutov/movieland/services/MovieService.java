@@ -23,102 +23,38 @@ public class MovieService {
     private final DecimalFormat numberFormater;
 
 
-
     public MovieService(MovieRepository movieRepository, CurrencyRateService currencyRateService) {
         this.movieRepository = movieRepository;
         this.currencyRateService = currencyRateService;
         numberFormater = new DecimalFormat("#.00");
     }
 
-    public List<Movie> getAllMoviesSortedByPrice() {
-        Map<Integer, Movie> movieMap = new HashMap<>();
-        double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate("USD", LocalDate.now()).getRate());
+    public List<Movie> getAllMoviesSortedByPrice(String currency) {
+        double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMovies();
-        allMovies.forEach(movie -> {
-            int movieId = movie.getMovieId();
-            if (movieMap.get(movieId) != null) {
-                movieMap.get(movieId).getGenres().add(movie.getGenre());
-            } else {
-                movieMap.put(movieId, movie);
-                movie.getGenres().add(movie.getGenre());
-            }
-        });
-        movieMap.values().forEach(movie ->
-                movie.setPrice(movie.getPrice() / usdRate));
-        return new ArrayList<>(movieMap.values())
-                .stream()
-                .sorted((m1, m2) -> new MoviePriceComparator().reversed().compare(m1, m2))
-                .collect(Collectors.toList());
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
+        return allMovies;
     }
 
-    public MoviePaginatorResponse<Movie> getAllMoviesSortedByPricePaginated(String limit,String offset) {
-        Map<Integer, Movie> movieMap = new HashMap<>();
-        double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate("USD", LocalDate.now()).getRate());
-        List<Movie> allMovies = movieRepository.getAllMovies();
-        allMovies.forEach(movie -> {
-            int movieId = movie.getMovieId();
-            if (movieMap.get(movieId) != null) {
-                movieMap.get(movieId).getGenres().add(movie.getGenre());
-            } else {
-                movieMap.put(movieId, movie);
-                movie.getGenres().add(movie.getGenre());
-            }
-        });
-        movieMap.values().forEach(movie ->
-                movie.setPrice(movie.getPrice() / usdRate));
-
-        List<Movie> list = new ArrayList<>(movieMap.values())
-                .stream()
-                .sorted((m1, m2) -> new MoviePriceComparator().reversed().compare(m1, m2))
-                .collect(Collectors.toList());
-
-        MoviePaginatorResponse<Movie> paginatorMovieSublist =
-                getPaginatorMovieSublist(list, Integer.parseInt(offset), Integer.parseInt(limit));
-
-
-        return paginatorMovieSublist;
+    public List<Movie> getAllMoviesSortedByPricePaginated(Integer limit, Integer offset, String currency) {
+        double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
+        List<Movie> allMovies = movieRepository.getPaginatedListOfMovies(limit, offset);
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
+        return allMovies;
     }
 
-    public List<Movie> getAllMoviesSortedByRating() {
-        Map<Integer, Movie> movieMap = new HashMap<>();
+    public List<Movie> getAllMoviesSortedByRating(String rating) {
         double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate("USD", LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMovies();
-        allMovies.forEach(movie -> {
-            int movieId = movie.getMovieId();
-            if (movieMap.get(movieId) != null) {
-                movieMap.get(movieId).getGenres().add(movie.getGenre());
-            } else {
-                movieMap.put(movieId, movie);
-                movie.getGenres().add(movie.getGenre());
-            }
-        });
-        movieMap.values().forEach(movie ->
-                movie.setPrice(movie.getPrice() / usdRate));
-        return new ArrayList<>(movieMap.values())
-                .stream()
-                .sorted((m1, m2) -> new MovieRatingComparator().compare(m1, m2))
-                .collect(Collectors.toList());
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * usdRate));
+        return allMovies;
     }
 
     public List<Movie> getAllMoviesSortedByYear() {
-        Map<Integer, Movie> movieMap = new HashMap<>();
         double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate("USD", LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMovies();
-        allMovies.forEach(movie -> {
-            int movieId = movie.getMovieId();
-            if (movieMap.get(movieId) != null) {
-                movieMap.get(movieId).getGenres().add(movie.getGenre());
-            } else {
-                movieMap.put(movieId, movie);
-                movie.getGenres().add(movie.getGenre());
-            }
-        });
-        movieMap.values().forEach(movie ->
-                movie.setPrice(movie.getPrice() / usdRate));
-        return new ArrayList<>(movieMap.values())
-                .stream()
-                .sorted((m1, m2) -> new MovieYearComparator().compare(m1, m2))
-                .collect(Collectors.toList());
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * usdRate));
+        return allMovies;
     }
 
 
@@ -160,8 +96,8 @@ public class MovieService {
     }
 
     private MoviePaginatorResponse<Movie> getPaginatorMovieSublist(List<Movie> list,
-                                                                         int offset,
-                                                                         int limit) {
+                                                                   int offset,
+                                                                   int limit) {
         int from = Math.min(offset, list.size());
         int to = Math.min(limit + offset, list.size());
         return new MoviePaginatorResponse<>(list.subList(from, to), list.size());

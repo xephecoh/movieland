@@ -2,9 +2,11 @@ package com.khamutov.movieland.controller;
 
 import com.khamutov.movieland.config.pagination.MoviePaginatorResponse;
 import com.khamutov.movieland.entity.Movie;
-import com.khamutov.movieland.services.CurrencyRateService;
 import com.khamutov.movieland.services.MovieService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,41 +14,39 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(path = "api/v1/movies")
+@RequiredArgsConstructor
 public class MovieController {
 
     private final MovieService movieService;
 
-
-    public MovieController(MovieService movieService, CurrencyRateService currencyRateService) {
-        this.movieService = movieService;
-    }
-
-    @RequestMapping
-    List<Movie> getAllMoviesSortedByPrice() {
-        return movieService.getAllMoviesSortedByPrice();
+    @GetMapping("{currency}")
+    List<Movie> getAllMoviesSortedByPrice(@PathVariable String currency) {
+        return movieService.getAllMoviesSortedByPrice(currency);
     }
 
     @PostMapping
-    MoviePaginatorResponse<Movie> getAllMoviesSortedByPricePaginated(@RequestParam String limit,
-                                                                     @RequestParam String offset) {
-        return movieService.getAllMoviesSortedByPricePaginated(limit,offset);
+    List<Movie> getAllMoviesSortedByPricePaginated(@RequestParam Integer limit,
+                                                   @RequestParam Integer offset,
+                                                   @RequestParam String currency) {
+        return movieService.getAllMoviesSortedByPricePaginated(limit, offset, currency);
     }
-    @RequestMapping("getAllMoviesSortedByRating")
-    List<Movie> getAllMoviesSortedByRating() {
-        return movieService.getAllMoviesSortedByRating();
+
+    @GetMapping
+    List<Movie> getAllMoviesSortedByRating(@RequestParam String rating) {
+        return movieService.getAllMoviesSortedByRating(rating);
     }
-    @RequestMapping("getAllMoviesSortedByYear")
+
+    @GetMapping("y")
     List<Movie> getAllMoviesSortedByYear() {
         return movieService.getAllMoviesSortedByYear();
     }
 
-    @RequestMapping("getRandomMovies/{randomNumber}")
-    List<Movie> getAllMovies(@PathVariable String randomNumber) {
-        Integer integer = Integer.parseInt(randomNumber);
-        return movieService.getRandomMovies(integer);
+    @GetMapping("random")
+    List<Movie> getAllMovies(@Value("${random}") Integer random) {
+        return movieService.getRandomMovies(random);
     }
 
-    @RequestMapping("getMoviesByGenre/{genre}")
+    @RequestMapping("genre/{genre}")
     List<Movie> getMoviesByGenre(@PathVariable String genre) {
         return movieService.getMoviesByGenre(genre);
     }

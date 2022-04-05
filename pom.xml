@@ -8,11 +8,11 @@
 		<version>2.5.4</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.khamutov.</groupId>
-	<artifactId>demo</artifactId>
+	<groupId>com.khamutov</groupId>
+	<artifactId>movieland</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>movieland</name>
+	<description>Service for reviewing movies</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -22,7 +22,6 @@
 		<artifactId>spring-boot-starter-web</artifactId>
 	</dependency>
 
-	<!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
 	<dependency>
 		<groupId>org.ehcache</groupId>
 		<artifactId>ehcache</artifactId>

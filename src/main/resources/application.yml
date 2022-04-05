@@ -16,9 +16,11 @@ server:
 
 spring:
   flyway:
-    baselineOnMigrate: 'true'
+    baselineOnMigrate: true
 
 nb:
-  url: "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange"
+  url: https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange
+
+random: 3
 
 

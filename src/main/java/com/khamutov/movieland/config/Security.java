@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 import javax.sql.DataSource;
@@ -17,18 +19,18 @@ public class Security extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("*/api/v1/movies/*")
-                .authenticated()
+                .permitAll()
                 .antMatchers("*/admin/*")
                 .hasRole("admin")
-                .antMatchers("/api/v1/movies/*")
-                .hasAuthority("admin")
+                //.antMatchers("/api/v1/movies/*")
+                //.hasAuthority("admin")
                 .and()
                 .formLogin()
                 .and()
                 .logout().logoutSuccessUrl("/");
     }
 
-    /*@Bean
+    @Bean
     public UserDetailsService users() {
         UserDetails user = User.builder()
                 .username("user")
@@ -41,7 +43,8 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .roles("admin", "user")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
-    }*/
+    }
+
 
     @Bean
     public JdbcUserDetailsManager users(DataSource dataSource) {
@@ -69,3 +72,4 @@ public class Security extends WebSecurityConfigurerAdapter {
         return jdbcUserDetailsManager;
     }
 }
+
