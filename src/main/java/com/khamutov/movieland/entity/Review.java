@@ -10,8 +10,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class Review implements Serializable {
-    private Long reviewId;
+    private int reviewId;
     private String review;
-    private String userName;
-    private String movieName;
+    private User user;
+    private Movie movie;
 }

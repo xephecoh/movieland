@@ -1,4 +1,4 @@
-package com.khamutov.movieland.services;
+package com.khamutov.movieland.config.exception;
 
 public class CurrencyRateNotFoundException extends RuntimeException {
     public CurrencyRateNotFoundException(String message) {

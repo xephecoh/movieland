@@ -1,4 +1,4 @@
-package com.khamutov.movieland.model;
+package com.khamutov.movieland.entity;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;

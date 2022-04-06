@@ -1,6 +1,6 @@
 package com.khamutov.movieland.config;
 
-import com.khamutov.movieland.model.CachedCurrencyRates;
+import com.khamutov.movieland.entity.CachedCurrencyRates;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;

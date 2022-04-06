@@ -1,4 +1,4 @@
-package com.khamutov.movieland.model;
+package com.khamutov.movieland.entity;
 
 import lombok.Value;
 

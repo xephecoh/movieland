@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config.requester;
+package com.khamutov.movieland.services;
 
 public interface NationalBankRequester {
     String getRatesAsXml(String url);

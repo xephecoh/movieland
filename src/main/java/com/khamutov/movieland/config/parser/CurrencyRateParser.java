@@ -1,7 +1,7 @@
 package com.khamutov.movieland.config.parser;
 
 
-import com.khamutov.movieland.model.CurrencyRate;
+import com.khamutov.movieland.entity.CurrencyRate;
 
 import java.util.List;
 

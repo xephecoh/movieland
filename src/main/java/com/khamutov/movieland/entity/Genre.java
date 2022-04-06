@@ -11,5 +11,4 @@ import java.util.Set;
 public class Genre implements Serializable {
     private Long genreId;
     private String genre;
-    private Set<Movie> movies;
 }

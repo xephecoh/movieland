@@ -1,6 +1,6 @@
 package com.khamutov.movieland.config.parser;
 
-import com.khamutov.movieland.model.CurrencyRate;
+import com.khamutov.movieland.entity.CurrencyRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;

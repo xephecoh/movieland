@@ -30,23 +30,7 @@ public class Security extends WebSecurityConfigurerAdapter {
                 .logout().logoutSuccessUrl("/");
     }
 
-    @Bean
-    public UserDetailsService users() {
-        UserDetails user = User.builder()
-                .username("user")
-                .password("{bcrypt}$2a$12$.YIauhJES6IOhPzx29gUPuoGCR8coELF.01odvPu.b5j2f22WGWvy")
-                .roles("USER")
-                .build();
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("{bcrypt}$2a$12$.YIauhJES6IOhPzx29gUPuoGCR8coELF.01odvPu.b5j2f22WGWvy")
-                .roles("admin", "user")
-                .build();
-        return new InMemoryUserDetailsManager(user, admin);
-    }
-
-
-    @Bean
+/*    @Bean
     public JdbcUserDetailsManager users(DataSource dataSource) {
         UserDetails user = User.builder()
                 .username("user")
@@ -70,6 +54,6 @@ public class Security extends WebSecurityConfigurerAdapter {
         jdbcUserDetailsManager.createUser(user);
         jdbcUserDetailsManager.createUser(admin);
         return jdbcUserDetailsManager;
-    }
+    }*/
 }
 

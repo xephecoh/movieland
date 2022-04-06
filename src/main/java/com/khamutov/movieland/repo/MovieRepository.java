@@ -31,11 +31,11 @@ public class MovieRepository implements MovieDao {
             "RANDOM()" +
             "LIMIT %s ;";
     private final static String GET_MOVIES_GET_GENRE = "select  movie.movie_id, movie.county,  movie.description, " +
-            "movie.movie_name, movie.price, movie.rating, movie.year, genres.genre \n" +
+            "movie.movie_name, movie.price, movie.rating, movie.year, genres.genre, genres.genre_id \n" +
             "from movie \n" +
             "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
             "inner join genres on movie_genres.genre_id = genres.genre_id\n" +
-            "where  genres.genre = %s ;";
+            "where  genres.genre_id = %s ;";
     private final static String GET_PAGINATED_LIST_OF_MOVIES = "select movie.movie_id, movie.county,  movie.description,\n" +
             "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre \n" +
             "from movie\n" +
@@ -49,6 +49,13 @@ public class MovieRepository implements MovieDao {
             "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
             "inner join genres on movie_genres.genre_id = genres.genre_id\n " +
             "sorted by rating %s";
+    private final static String GET_LIST_OF_MOVIES_SORTED_BY_YEAR = "select movie.movie_id, movie.county,  movie.description,\n" +
+            "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre \n" +
+            "from movie\n" +
+            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
+            "inner join genres on movie_genres.genre_id = genres.genre_id\n " +
+            "sorted by year %s";
+
 
 
 
@@ -64,7 +71,7 @@ public class MovieRepository implements MovieDao {
     }
 
     @Override
-    public List<Movie> getMoviesByGenre(String genre) {
+    public List<Movie> getMoviesByGenre(Integer genre) {
         return jdbcTemplate.query(String.format(GET_MOVIES_GET_GENRE, genre), extractor);
     }
 
@@ -77,6 +84,11 @@ public class MovieRepository implements MovieDao {
     @Override
     public List<Movie> getAllMoviesSortedByRating(String rating) {
         String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_RATING,rating);
+        return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_RATING, extractor);
+    }
+    @Override
+    public List<Movie> getAllMoviesSortedByDate(String year) {
+        String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_YEAR,year);
         return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_RATING, extractor);
     }
 

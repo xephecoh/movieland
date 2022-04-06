@@ -9,10 +9,14 @@ public interface MovieDao {
 
     List<Movie> getRandomMovies(int numberOfMovies);
 
-    List<Movie> getMoviesByGenre(String genre);
+    List<Movie> getMoviesByGenre(Integer genre);
 
     List<Movie> getPaginatedListOfMovies(int offset,int limit);
 
     List<Movie> getAllMoviesSortedByRating(String rating);
+
+    List<Movie> getAllMoviesSortedByDate(String rating);
+
+
 }
 
