@@ -19,7 +19,7 @@ public class MovieController {
     private final MovieServiceImplementation movieServiceImplementation;
 
     @GetMapping()
-    List<Movie> getAllMoviesSortedByPrice(@RequestParam Currency currency) {
+    List<Movie> getAllMoviesSortedByPrice(@RequestParam ("currency") Currency currency) {
         return movieServiceImplementation.getAllMoviesSortedByPrice(currency);
     }
 
