@@ -3,6 +3,7 @@ package com.khamutov.movieland.controller;
 
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
+import com.khamutov.movieland.entity.SortingPattern;
 import com.khamutov.movieland.services.MovieServiceImplementation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +32,15 @@ public class MovieController {
     }
 
     @GetMapping
-    List<Movie> getAllMoviesSortedByRating(@RequestParam String rating,
+    List<Movie> getAllMoviesSortedByRating(@RequestParam SortingPattern sortingPattern,
                                            @RequestParam ("currency") Currency currency) {
-        return movieServiceImplementation.getAllMoviesSortedByRating(rating,currency);
+        return movieServiceImplementation.getAllMoviesSortedByRating(sortingPattern,currency);
     }
 
     @GetMapping
-    List<Movie> getAllMoviesSortedByYear(@RequestParam String date,
+    List<Movie> getAllMoviesSortedByYear(@RequestParam SortingPattern sortingPattern,
                                          @RequestParam ("currency") Currency currency) {
-        return movieServiceImplementation.getAllMoviesSortedByYear(date,currency);
+        return movieServiceImplementation.getAllMoviesSortedByYear(sortingPattern,currency);
     }
 
     @GetMapping("random")

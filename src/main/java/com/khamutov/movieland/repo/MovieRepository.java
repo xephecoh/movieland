@@ -3,6 +3,7 @@ package com.khamutov.movieland.repo;
 import com.khamutov.movieland.config.MovieResultSetExtractor;
 import com.khamutov.movieland.controller.MovieDao;
 import com.khamutov.movieland.entity.Movie;
+import com.khamutov.movieland.entity.SortingPattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -82,13 +83,13 @@ public class MovieRepository implements MovieDao {
     }
 
     @Override
-    public List<Movie> getAllMoviesSortedByRating(String rating) {
-        String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_RATING,rating);
+    public List<Movie> getAllMoviesSortedByRating(SortingPattern sortingPattern) {
+        String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_RATING,sortingPattern.toString());
         return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_RATING, extractor);
     }
     @Override
-    public List<Movie> getAllMoviesSortedByDate(String year) {
-        String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_YEAR,year);
+    public List<Movie> getAllMoviesSortedByDate(SortingPattern sortingPattern) {
+        String queryWithInjection = String.format(GET_LIST_OF_MOVIES_SORTED_BY_YEAR,sortingPattern.toString());
         return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_RATING, extractor);
     }
 

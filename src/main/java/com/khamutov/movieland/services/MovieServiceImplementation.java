@@ -3,6 +3,7 @@ package com.khamutov.movieland.services;
 
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
+import com.khamutov.movieland.entity.SortingPattern;
 import com.khamutov.movieland.repo.MovieRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -33,16 +34,16 @@ public class MovieServiceImplementation {
         return allMovies;
     }
 
-    public List<Movie> getAllMoviesSortedByRating(String rating, Currency currency) {
+    public List<Movie> getAllMoviesSortedByRating(SortingPattern sortingPattern, Currency currency) {
         double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
-        List<Movie> allMovies = movieRepository.getAllMoviesSortedByRating(rating);
+        List<Movie> allMovies = movieRepository.getAllMoviesSortedByRating(sortingPattern);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
         return allMovies;
     }
 
-    public List<Movie> getAllMoviesSortedByYear(String date,Currency currency) {
+    public List<Movie> getAllMoviesSortedByYear(SortingPattern sortingPattern,Currency currency) {
         double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
-        List<Movie> allMovies = movieRepository.getAllMoviesSortedByDate(date);
+        List<Movie> allMovies = movieRepository.getAllMoviesSortedByDate(sortingPattern);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * usdRate));
         return allMovies;
     }
