@@ -3,27 +3,25 @@ package com.khamutov.movieland.services;
 
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
+import com.khamutov.movieland.entity.Order;
 import com.khamutov.movieland.entity.SortingPattern;
 import com.khamutov.movieland.repo.MovieRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MovieServiceImplementation {
     private final MovieRepository movieRepository;
     private final CurrencyRateService currencyRateService;
 
-    public MovieServiceImplementation(MovieRepository movieRepository, CurrencyRateService currencyRateService) {
-        this.movieRepository = movieRepository;
-        this.currencyRateService = currencyRateService;
-
-    }
 
     public List<Movie> getAllMoviesSortedByPrice(Currency currency) {
         double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMovies();
-        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() / currencyRate));
         return allMovies;
     }
 
@@ -34,7 +32,7 @@ public class MovieServiceImplementation {
         return allMovies;
     }
 
-    public List<Movie> getAllMoviesSortedByRating(SortingPattern sortingPattern, Currency currency) {
+    public List<Movie> getAllMoviesSortedByRating(Order sortingPattern, Currency currency) {
         double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMoviesSortedByRating(sortingPattern);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
@@ -42,9 +40,9 @@ public class MovieServiceImplementation {
     }
 
     public List<Movie> getAllMoviesSortedByYear(SortingPattern sortingPattern,Currency currency) {
-        double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
+        double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMoviesSortedByDate(sortingPattern);
-        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * usdRate));
+        allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
         return allMovies;
     }
 

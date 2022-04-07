@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -19,7 +18,7 @@ public class Movie implements Serializable {
     private String description;
     private double rating;
     private double price;
-    private Set<String> genres;
+    private Set<Genre> genres;
     @JsonIgnore
-    private String genre;
+    private Genre genre;
 }

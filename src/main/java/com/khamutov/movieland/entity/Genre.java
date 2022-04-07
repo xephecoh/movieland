@@ -1,14 +1,17 @@
 package com.khamutov.movieland.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Set;
+
 
 
 @Data
 @AllArgsConstructor
+@Builder
 public class Genre implements Serializable {
-    private Long genreId;
+    @JsonIgnore
+    private int genreId;
     private String genre;
 }
