@@ -26,7 +26,6 @@ public class MovieResultSetExtractor implements ResultSetExtractor<List<Movie>> 
                     .price(resultSet.getDouble("price"))
                     .rating(resultSet.getDouble("rating"))
                     .year(resultSet.getInt("year"))
-                   // .genre(resultSet.getString("genre"))
                     .build();
             movies.add(movie);
         }

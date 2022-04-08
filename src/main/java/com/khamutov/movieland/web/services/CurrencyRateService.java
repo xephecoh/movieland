@@ -1,8 +1,7 @@
-package com.khamutov.movieland.services;
+package com.khamutov.movieland.web.services;
 
 import com.khamutov.movieland.config.NationalBankConfig;
-import com.khamutov.movieland.config.exception.CurrencyRateNotFoundException;
-import com.khamutov.movieland.config.parser.CurrencyRateParser;
+import com.khamutov.movieland.exception.CurrencyRateNotFoundException;
 import com.khamutov.movieland.entity.CachedCurrencyRates;
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.CurrencyRate;
@@ -23,8 +22,8 @@ public class CurrencyRateService {
     public static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
-    private final NationalBankRequester nationalBankRequester;
-    private final CurrencyRateParser currencyRateParser;
+    private final BankService bankService;
+    private final CurrencyRateParserService currencyRateParserService;
     private final NationalBankConfig nationalBankConfig;
     private final Cache<LocalDate, CachedCurrencyRates> currencyRateCache;
 
@@ -33,8 +32,8 @@ public class CurrencyRateService {
         List<CurrencyRate> rates;
         CachedCurrencyRates cachedCurrencyRates = currencyRateCache.get(date);
         if (cachedCurrencyRates == null) {
-            String ratesAsXml = nationalBankRequester.getRatesAsXml(nationalBankConfig.getUrl());
-            rates = currencyRateParser.parse(ratesAsXml);
+            String ratesAsXml = bankService.getRatesAsXml(nationalBankConfig.getUrl());
+            rates = currencyRateParserService.parse(ratesAsXml);
             currencyRateCache.put(date, new CachedCurrencyRates(rates));
         } else {
             rates = cachedCurrencyRates.getCurrencyRates();

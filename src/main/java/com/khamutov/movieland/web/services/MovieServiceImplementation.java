@@ -1,11 +1,11 @@
-package com.khamutov.movieland.services;
+package com.khamutov.movieland.web.services;
 
 
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
 import com.khamutov.movieland.entity.Order;
 import com.khamutov.movieland.entity.SortingPattern;
-import com.khamutov.movieland.repo.MovieRepository;
+import com.khamutov.movieland.web.repo.soringjdbc.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

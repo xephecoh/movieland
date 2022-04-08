@@ -1,5 +1,7 @@
-package com.khamutov.movieland.config.parser;
+package com.khamutov.movieland.web.services.xml;
 
+import com.khamutov.movieland.exception.CurrencyRateParsingException;
+import com.khamutov.movieland.web.services.CurrencyRateParserService;
 import com.khamutov.movieland.entity.CurrencyRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class CurrencyRateParserXml implements CurrencyRateParser {
+public class CurrencyRateParserServiceXml implements CurrencyRateParserService {
     @Override
     public List<CurrencyRate> parse(String ratesAsString) {
         List<CurrencyRate> rates = new ArrayList<>();

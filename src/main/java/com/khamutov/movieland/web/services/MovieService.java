@@ -1,4 +1,4 @@
-package com.khamutov.movieland.services;
+package com.khamutov.movieland.web.services;
 
 import com.khamutov.movieland.entity.Movie;
 

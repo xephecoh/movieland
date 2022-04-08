@@ -1,6 +1,7 @@
-package com.khamutov.movieland.services;
+package com.khamutov.movieland.web.services.nationalbank;
 
-import com.khamutov.movieland.config.exception.RequesterException;
+import com.khamutov.movieland.exception.RequesterException;
+import com.khamutov.movieland.web.services.BankService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.net.http.HttpResponse;
 
 @Service
 @Slf4j
-public class NationalBankService implements NationalBankRequester {
+public class NationalBankService implements BankService {
 
     @Override
     public String getRatesAsXml(String url) {

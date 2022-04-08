@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config.comparators;
+package com.khamutov.movieland.web.comparators;
 
 import com.khamutov.movieland.entity.Movie;
 

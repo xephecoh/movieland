@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config;
+package com.khamutov.movieland.web.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;

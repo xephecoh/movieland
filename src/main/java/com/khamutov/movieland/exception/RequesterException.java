@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config.exception;
+package com.khamutov.movieland.exception;
 
 public class RequesterException extends RuntimeException {
     public RequesterException(Throwable cause) {

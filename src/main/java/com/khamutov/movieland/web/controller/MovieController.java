@@ -1,11 +1,11 @@
-package com.khamutov.movieland.controller;
+package com.khamutov.movieland.web.controller;
 
 
 import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
 import com.khamutov.movieland.entity.Order;
 import com.khamutov.movieland.entity.SortingPattern;
-import com.khamutov.movieland.services.MovieServiceImplementation;
+import com.khamutov.movieland.web.services.MovieServiceImplementation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

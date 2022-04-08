@@ -1,6 +1,5 @@
-package com.khamutov.movieland.config.exception;
+package com.khamutov.movieland.exception;
 
-import com.khamutov.movieland.entity.Movie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -1,9 +1,9 @@
-package com.khamutov.movieland.repo;
+package com.khamutov.movieland.web.repo.soringjdbc;
 
 import com.khamutov.movieland.config.GenreResultSetExtractor;
 import com.khamutov.movieland.config.MovieResultSetExtractor;
-import com.khamutov.movieland.controller.MovieDao;
 import com.khamutov.movieland.entity.*;
+import com.khamutov.movieland.web.repo.MovieDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;

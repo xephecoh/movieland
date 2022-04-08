@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config.pagination;
+package com.khamutov.movieland.web.pagination;
 
 
 
