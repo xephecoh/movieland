@@ -1,4 +1,4 @@
-package com.khamutov.movieland.web.repo;
+package com.khamutov.movieland.web.dao;
 
 import com.khamutov.movieland.entity.Movie;
 import com.khamutov.movieland.entity.Order;

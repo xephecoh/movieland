@@ -5,7 +5,7 @@ import com.khamutov.movieland.entity.Currency;
 import com.khamutov.movieland.entity.Movie;
 import com.khamutov.movieland.entity.Order;
 import com.khamutov.movieland.entity.SortingPattern;
-import com.khamutov.movieland.web.repo.soringjdbc.MovieRepository;
+import com.khamutov.movieland.web.dao.soringjdbc.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
