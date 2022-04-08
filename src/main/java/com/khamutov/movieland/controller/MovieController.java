@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -45,7 +46,6 @@ public class MovieController {
     }
 
 
-
     @GetMapping("random")
     List<Movie> getAllMovies(@Value("${random}") Integer random,
                              @RequestParam("currency") Currency currency) {
@@ -56,6 +56,16 @@ public class MovieController {
     List<Movie> getMoviesByGenre(@RequestParam Integer genre,
                                  @RequestParam("currency") Currency currency) {
         return movieServiceImplementation.getMoviesByGenre(genre, currency);
+    }
+
+    @GetMapping("create")
+    void createMovie(@RequestParam String movieName,
+                     @RequestParam String description,
+                     @RequestParam (required=false,name="price")Double price,
+                     @RequestParam Integer year,
+                     @RequestParam Double rating,
+                     @RequestParam("genres") String[] genres) {
+        movieServiceImplementation.createMovie(movieName, description, price, year, rating, Arrays.asList(genres));
     }
 
 }

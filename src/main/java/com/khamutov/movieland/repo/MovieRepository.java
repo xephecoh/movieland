@@ -64,9 +64,9 @@ public class MovieRepository implements MovieDao {
             "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
             "inner join genres on movie_genres.genre_id = genres.genre_id\n " +
             "sorted by year asc ";
-    private final static String INSERT_NEW_MOVIE = "INSERT INTO movies (movie_name,description,price,year,rating) \n " +
-            "VALUES (?,?,?,?,?,?);";
-    private final static String GET_GENRES_BY_ID = "SELECT * from genres WHERE genres = ?";
+    private final static String INSERT_NEW_MOVIE = "INSERT INTO movie (movie_name,description,price,year,rating) \n " +
+            "VALUES (?,?,?,?,?);";
+    private final static String GET_GENRES_BY_ID = "SELECT * from genres WHERE genre = ?";
     private final static String SET_MOVIE_GENRES_BY_ID = "UPDATE genres_movies SET genres_id = ? WHERE movie_id = ?";
     private final static String INSERT_INTO_MOVIE_GENRES = "INSERT INTO genres_movies (movie_id,genres_id) VALUES (?,?)";
 
@@ -99,17 +99,18 @@ public class MovieRepository implements MovieDao {
 
     @Override
     public List<Movie> getAllMoviesSortedByDate(SortingPattern sortingPattern) {
-        return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_RATING, movieExtractor);
+        return jdbcTemplate.query(GET_LIST_OF_MOVIES_SORTED_BY_YEAR, movieExtractor);
     }
 
 
     @Transactional
-    public void insertMovie(String movieName,
-                              String description,
-                              double price,
-                              int year,
-                              double rating,
-                              List<String> genres) {
+    @Override
+    public void createMovie(String movieName,
+                            String description,
+                            double price,
+                            int year,
+                            double rating,
+                            List<String> genres) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -119,7 +120,7 @@ public class MovieRepository implements MovieDao {
             ps.setString(2, description);
             ps.setDouble(3, price);
             ps.setInt(4, year);
-            ps.setDouble(6, rating);
+            ps.setDouble(5, rating);
             return ps;
         }, keyHolder);
 
@@ -143,29 +144,6 @@ public class MovieRepository implements MovieDao {
                 ps.setString(2, description);
                 return ps;
             }, keyHolder);
-
-        });
-
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection
-                    .prepareStatement(INSERT_NEW_MOVIE_IN_MOVIE_ID);
-            ps.setString(1, movieName);
-            ps.setString(2, description);
-            ps.setDouble(3, price);
-            ps.setInt(4, year);
-            ps.setDouble(6, rating);
-            return ps;
-        }, keyHolder);
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection
-                    .prepareStatement(INSERT_INTO_MOVIE_GENRES);
-            ps.setInt(1, genresEntity.get(0).getGenreId());
-            ps.setInt(1, movieID);
-            return ps;
         });
     }
-
-
 }

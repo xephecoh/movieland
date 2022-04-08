@@ -8,6 +8,7 @@ import com.khamutov.movieland.entity.SortingPattern;
 import com.khamutov.movieland.repo.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -39,22 +40,21 @@ public class MovieServiceImplementation {
         return allMovies;
     }
 
-    public List<Movie> getAllMoviesSortedByYear(SortingPattern sortingPattern,Currency currency) {
+    public List<Movie> getAllMoviesSortedByYear(SortingPattern sortingPattern, Currency currency) {
         double currencyRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getAllMoviesSortedByDate(sortingPattern);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() * currencyRate));
         return allMovies;
     }
 
-
-    public List<Movie> getRandomMovies(int randomNumber,Currency currency) {
+    public List<Movie> getRandomMovies(int randomNumber, Currency currency) {
         double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getRandomMovies(randomNumber);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() / usdRate));
         return allMovies;
     }
 
-    public List<Movie> getMoviesByGenre(Integer genre,Currency currency) {
+    public List<Movie> getMoviesByGenre(Integer genre, Currency currency) {
         double usdRate = Double.parseDouble(currencyRateService.getCurrencyRate(currency, LocalDate.now()).getRate());
         List<Movie> allMovies = movieRepository.getMoviesByGenre(genre);
         allMovies.forEach(movie -> movie.setPrice(movie.getPrice() / usdRate));
@@ -62,4 +62,12 @@ public class MovieServiceImplementation {
     }
 
 
+    public void createMovie(String movieName,
+                            String description,
+                            double price,
+                            int year,
+                            double rating,
+                            List<String> genres) {
+        movieRepository.createMovie(movieName, description, price, year, rating, genres);
+    }
 }

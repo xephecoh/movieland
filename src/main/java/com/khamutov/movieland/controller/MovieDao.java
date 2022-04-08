@@ -19,6 +19,13 @@ public interface MovieDao {
 
     List<Movie> getAllMoviesSortedByDate(SortingPattern sortingPattern);
 
+    void createMovie(String movieName,
+                            String description,
+                            double price,
+                            int year,
+                            double rating,
+                            List<String> genres);
+
 
 }
 
