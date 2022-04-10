@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -73,7 +74,7 @@ public class MovieRepository implements MovieDao {
             "VALUES (?,?,?,?,?);";
     private final static String GET_GENRES_WITH_ID_BY_NAME = "SELECT * from genres WHERE genre IN ";
     private final static String SET_MOVIE_GENRES_BY_ID = "UPDATE genres_movies SET genres_id = ? WHERE movie_id = ?";
-    private final static String INSERT_INTO_MOVIE_GENRES = "INSERT INTO genres_movies (movie_id,genres_id) VALUES (?,?)";
+    private final static String INSERT_INTO_MOVIE_GENRES = "INSERT INTO movie_genres (movie_id,genre_id) VALUES (?,?)";
 
 
     @Override
@@ -130,13 +131,15 @@ public class MovieRepository implements MovieDao {
         }, keyHolder);
 
         Integer movieID = (Integer) keyHolder.getKey();
-
+        //Integer movieId = 519;
         StringJoiner joiner = new StringJoiner(",", "(", ")");
-        genres.forEach(joiner::add);
+        genres.forEach(genre -> joiner.add("'"+genre+"'"));
+        System.out.println(GET_GENRES_WITH_ID_BY_NAME.concat(joiner.toString()));
         List<Genre> genresEntitiesList = jdbcTemplate.query(GET_GENRES_WITH_ID_BY_NAME.concat(joiner.toString()), genreExtractor);
 
+
         List<MovieGenre> movieGenres = genresEntitiesList.stream()
-                .map(genre -> new MovieGenre(genre.getGenreId(), movieID))
+                .map(genre -> new MovieGenre(movieID,genre.getGenreId()))
                 .collect(Collectors.toList());
 
         jdbcTemplate.batchUpdate(INSERT_INTO_MOVIE_GENRES, new BatchPreparedStatementSetter() {
@@ -144,7 +147,7 @@ public class MovieRepository implements MovieDao {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 MovieGenre tempGenre = movieGenres.get(i);
                 ps.setInt(1, tempGenre.getMovieId());
-                ps.setInt(1, tempGenre.getGenreId());
+                ps.setInt(2, tempGenre.getGenreId());
             }
 
             @Override
