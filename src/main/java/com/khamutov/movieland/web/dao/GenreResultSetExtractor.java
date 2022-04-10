@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config;
+package com.khamutov.movieland.web.dao;
 
 
 import com.khamutov.movieland.entity.Genre;
@@ -12,17 +12,19 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Service
-public class GenreResultSetExtractor implements ResultSetExtractor<Genre> {
+public class GenreResultSetExtractor implements ResultSetExtractor <List<Genre>> {
 
     @Override
-    public Genre extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+    public List<Genre> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+        List<Genre> list = new ArrayList<>();
         Genre genre = null;
         while (resultSet.next()) {
             genre = Genre.builder()
                     .genreId(resultSet.getInt("genre_id"))
                     .genre(resultSet.getString("genre"))
                     .build();
+            list.add(genre);
         }
-        return genre;
+        return list;
     }
 }

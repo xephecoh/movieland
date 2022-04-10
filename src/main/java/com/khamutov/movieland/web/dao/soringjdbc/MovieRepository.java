@@ -1,20 +1,21 @@
 package com.khamutov.movieland.web.dao.soringjdbc;
 
-import com.khamutov.movieland.config.GenreResultSetExtractor;
-import com.khamutov.movieland.config.MovieResultSetExtractor;
+import com.khamutov.movieland.web.dao.GenreResultSetExtractor;
+import com.khamutov.movieland.web.dao.MovieResultSetExtractor;
 import com.khamutov.movieland.entity.*;
 import com.khamutov.movieland.web.dao.MovieDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 
@@ -26,47 +27,51 @@ public class MovieRepository implements MovieDao {
     private final JdbcTemplate jdbcTemplate;
     private final MovieResultSetExtractor movieExtractor;
     private final GenreResultSetExtractor genreExtractor;
-    private final static String GET_ALL_MOVIES = "select movie.movie_id, movie.county,  movie.description,\n" +
-            "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre, genres.genre_id \n" +
-            "from movie\n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id ";
+    private final static String GET_ALL_MOVIES = """
+            select movie.movie_id, movie.county,  movie.description,
+            movie.movie_name, movie.price, movie.rating, movie.year,genres.genre, genres.genre_id\s
+            from movie
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id\s""";
 
-    private final static String GET_RANDOM_MOVIES = "select  movie.movie_id, movie.county,  movie.description, " +
-            "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre \n" +
-            "from movie \n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id ORDER BY\n" +
-            "RANDOM()" +
-            "LIMIT ? ;";
-    private final static String GET_MOVIES_GET_GENRE = "select  movie.movie_id, movie.county,  movie.description, " +
-            "movie.movie_name, movie.price, movie.rating, movie.year, genres.genre, genres.genre_id \n" +
-            "from movie \n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id\n" +
-            "where  genres.genre_id = %s ;";
-    private final static String GET_PAGINATED_LIST_OF_MOVIES = "select movie.movie_id, movie.county,  movie.description,\n" +
-            "movie.movie_name, movie.price, movie.rating, movie.year, genres.genre, genres.genre_id \n" +
-            "from movie\n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id\n " +
-            "offset %s rows \n" +
-            "fetch next %S  rows only\n";
-    private final static String GET_LIST_OF_MOVIES_SORTED_BY_RATING = "select movie.movie_id, movie.county,  movie.description,\n" +
-            "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre, genres.genre_id \n" +
-            "from movie\n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id\n" +
-            "order by movie.rating asc ";
-    private final static String GET_LIST_OF_MOVIES_SORTED_BY_YEAR = "select movie.movie_id, movie.county,  movie.description,\n" +
-            "movie.movie_name, movie.price, movie.rating, movie.year,genres.genre \n" +
-            "from movie\n" +
-            "inner  join  movie_genres on movie.movie_id = movie_genres.movie_id\n" +
-            "inner join genres on movie_genres.genre_id = genres.genre_id\n " +
-            "sorted by year asc ";
+    private final static String GET_RANDOM_MOVIES = """
+            select  movie.movie_id, movie.county,  movie.description, movie.movie_name, movie.price, movie.rating, movie.year,genres.genre\s
+            from movie\s
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id ORDER BY
+            RANDOM()LIMIT ? ;""";
+    private final static String GET_MOVIES_GET_GENRE = """
+            select  movie.movie_id, movie.county,  movie.description, movie.movie_name, movie.price, movie.rating, movie.year, genres.genre, genres.genre_id\s
+            from movie\s
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id
+            where  genres.genre_id = %s ;""";
+    private final static String GET_PAGINATED_LIST_OF_MOVIES = """
+            select movie.movie_id, movie.county,  movie.description,
+            movie.movie_name, movie.price, movie.rating, movie.year, genres.genre, genres.genre_id\s
+            from movie
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id
+             offset %s rows\s
+            fetch next %S  rows only
+            """;
+    private final static String GET_LIST_OF_MOVIES_SORTED_BY_RATING = """
+            select movie.movie_id, movie.county,  movie.description,
+            movie.movie_name, movie.price, movie.rating, movie.year,genres.genre, genres.genre_id\s
+            from movie
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id
+            order by movie.rating asc\s""";
+    private final static String GET_LIST_OF_MOVIES_SORTED_BY_YEAR = """
+            select movie.movie_id, movie.county,  movie.description,
+            movie.movie_name, movie.price, movie.rating, movie.year,genres.genre\s
+            from movie
+            inner  join  movie_genres on movie.movie_id = movie_genres.movie_id
+            inner join genres on movie_genres.genre_id = genres.genre_id
+             sorted by year asc\s""";
     private final static String INSERT_NEW_MOVIE = "INSERT INTO movie (movie_name,description,price,year,rating) \n " +
             "VALUES (?,?,?,?,?);";
-    private final static String GET_GENRES_BY_ID = "SELECT * from genres WHERE genre = ?";
+    private final static String GET_GENRES_WITH_ID_BY_NAME = "SELECT * from genres WHERE genre IN ";
     private final static String SET_MOVIE_GENRES_BY_ID = "UPDATE genres_movies SET genres_id = ? WHERE movie_id = ?";
     private final static String INSERT_INTO_MOVIE_GENRES = "INSERT INTO genres_movies (movie_id,genres_id) VALUES (?,?)";
 
@@ -125,25 +130,28 @@ public class MovieRepository implements MovieDao {
         }, keyHolder);
 
         Integer movieID = (Integer) keyHolder.getKey();
-        List<Genre> genresEntity = new ArrayList<>();
 
-        for (String genre : genres) {
-            Genre genreEntity = jdbcTemplate.query(GET_GENRES_BY_ID, genreExtractor, genre);
-            genresEntity.add(genreEntity);
-        }
+        StringJoiner joiner = new StringJoiner(",", "(", ")");
+        genres.forEach(joiner::add);
+        List<Genre> genresEntitiesList = jdbcTemplate.query(GET_GENRES_WITH_ID_BY_NAME.concat(joiner.toString()), genreExtractor);
 
-        List<MovieGenre> movieGenres = genresEntity.stream()
+        List<MovieGenre> movieGenres = genresEntitiesList.stream()
                 .map(genre -> new MovieGenre(genre.getGenreId(), movieID))
                 .collect(Collectors.toList());
 
-        movieGenres.forEach(movieGenre -> {
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection
-                        .prepareStatement(INSERT_NEW_MOVIE_IN_MOVIE_ID);
-                ps.setString(1, movieName);
-                ps.setString(2, description);
-                return ps;
-            }, keyHolder);
+        jdbcTemplate.batchUpdate(INSERT_INTO_MOVIE_GENRES, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                MovieGenre tempGenre = movieGenres.get(i);
+                ps.setInt(1, tempGenre.getMovieId());
+                ps.setInt(1, tempGenre.getGenreId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return genresEntitiesList.size();
+            }
         });
+
     }
 }

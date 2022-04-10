@@ -1,4 +1,4 @@
-package com.khamutov.movieland.config;
+package com.khamutov.movieland.web.dao;
 
 
 import com.khamutov.movieland.entity.Genre;
