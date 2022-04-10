@@ -6,12 +6,14 @@ import com.khamutov.movieland.entity.*;
 import com.khamutov.movieland.web.dao.MovieDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.annotation.NonNullApi;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -24,7 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class MovieRepository implements MovieDao {
-    private static final String INSERT_NEW_MOVIE_IN_MOVIE_ID = "INSERT INTO movies_genres ()";
     private final JdbcTemplate jdbcTemplate;
     private final MovieResultSetExtractor movieExtractor;
     private final GenreResultSetExtractor genreExtractor;
@@ -73,7 +74,6 @@ public class MovieRepository implements MovieDao {
     private final static String INSERT_NEW_MOVIE = "INSERT INTO movie (movie_name,description,price,year,rating) \n " +
             "VALUES (?,?,?,?,?);";
     private final static String GET_GENRES_WITH_ID_BY_NAME = "SELECT * from genres WHERE genre IN ";
-    private final static String SET_MOVIE_GENRES_BY_ID = "UPDATE genres_movies SET genres_id = ? WHERE movie_id = ?";
     private final static String INSERT_INTO_MOVIE_GENRES = "INSERT INTO movie_genres (movie_id,genre_id) VALUES (?,?)";
 
 
@@ -131,30 +131,29 @@ public class MovieRepository implements MovieDao {
         }, keyHolder);
 
         Integer movieID = (Integer) keyHolder.getKey();
-        //Integer movieId = 519;
         StringJoiner joiner = new StringJoiner(",", "(", ")");
         genres.forEach(genre -> joiner.add("'"+genre+"'"));
-        System.out.println(GET_GENRES_WITH_ID_BY_NAME.concat(joiner.toString()));
         List<Genre> genresEntitiesList = jdbcTemplate.query(GET_GENRES_WITH_ID_BY_NAME.concat(joiner.toString()), genreExtractor);
 
+        if (genresEntitiesList!=null) {
+            final List<MovieGenre> movieGenres = genresEntitiesList.stream()
+                    .map(genre -> new MovieGenre(movieID, genre.getGenreId()))
+                    .collect(Collectors.toList());
 
-        List<MovieGenre> movieGenres = genresEntitiesList.stream()
-                .map(genre -> new MovieGenre(movieID,genre.getGenreId()))
-                .collect(Collectors.toList());
+            jdbcTemplate.batchUpdate(INSERT_INTO_MOVIE_GENRES, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues( PreparedStatement ps, int i) throws SQLException {
+                    MovieGenre tempGenre = movieGenres.get(i);
+                    ps.setInt(1, tempGenre.getMovieId());
+                    ps.setInt(2, tempGenre.getGenreId());
+                }
 
-        jdbcTemplate.batchUpdate(INSERT_INTO_MOVIE_GENRES, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                MovieGenre tempGenre = movieGenres.get(i);
-                ps.setInt(1, tempGenre.getMovieId());
-                ps.setInt(2, tempGenre.getGenreId());
-            }
+                @Override
+                public int getBatchSize() {
+                    return movieGenres.size();
+                }
 
-            @Override
-            public int getBatchSize() {
-                return genresEntitiesList.size();
-            }
-        });
-
+            });
+        }
     }
 }
